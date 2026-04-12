@@ -1,0 +1,289 @@
+/* ============================================
+   Dashboard Page — Soft Brutalism
+   ============================================ */
+
+/* ─── Page Layout ─── */
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-6);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ─── Welcome Banner ─── */
+.dashboard-welcome {
+  padding: var(--space-8) var(--space-6);
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent-light));
+  border: var(--border-thick);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-brutal-lg);
+}
+
+.welcome-text {
+  font-family: var(--font-heading);
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-extrabold);
+  margin: 0;
+  color: var(--color-text);
+  line-height: var(--line-height-tight);
+}
+
+.welcome-date {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  margin: var(--space-2) 0 0;
+  font-weight: var(--font-weight-medium);
+}
+
+/* ─── Stat Cards Grid ─── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-bg-card);
+  border: var(--border-thick);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-brutal);
+  transition: all var(--transition-fast);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-brutal-hover);
+}
+
+.stat-card--tasks {
+  border-left: 5px solid var(--color-primary);
+}
+
+.stat-card--completed {
+  border-left: 5px solid var(--color-accent);
+}
+
+.stat-card--due-soon {
+  border-left: 5px solid var(--color-warning-dark);
+}
+
+.stat-card--hours {
+  border-left: 5px solid var(--color-info);
+  cursor: pointer;
+}
+
+.stat-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.stat-number {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+}
+
+.stat-edit-hint {
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.stat-card--hours:hover .stat-edit-hint {
+  opacity: 1;
+}
+
+/* ─── Inline Hours Input ─── */
+.stat-hours-input {
+  width: 70px;
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  outline: none;
+  text-align: center;
+}
+
+.stat-hours-input:focus {
+  border-color: var(--color-info-dark);
+  box-shadow: 0 0 0 3px var(--color-info-light);
+}
+
+/* ─── Quick Actions ─── */
+.quick-actions {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+/* ─── Upcoming Deadlines ─── */
+.upcoming-section {
+  background: var(--color-bg-card);
+  border: var(--border-thick);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-brutal);
+  overflow: hidden;
+}
+
+.upcoming-header {
+  padding: var(--space-5) var(--space-6);
+  border-bottom: var(--border-medium);
+  background: var(--color-bg-secondary);
+}
+
+.upcoming-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+}
+
+.upcoming-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.upcoming-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-border-light);
+  transition: background var(--transition-fast);
+}
+
+.upcoming-item:last-child {
+  border-bottom: none;
+}
+
+.upcoming-item:hover {
+  background: var(--color-bg-hover);
+}
+
+.upcoming-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.upcoming-item-name {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.upcoming-item-date {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.upcoming-empty {
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+}
+
+.upcoming-empty p {
+  color: var(--color-text-muted);
+  margin: 0;
+  font-size: var(--text-base);
+}
+
+.upcoming-view-all {
+  display: block;
+  width: 100%;
+  padding: var(--space-3);
+  text-align: center;
+  background: var(--color-bg-secondary);
+  border: none;
+  border-top: var(--border-medium);
+  color: var(--color-text-link);
+  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-heading);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.upcoming-view-all:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+/* ─── Loading ─── */
+.upcoming-loading {
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.upcoming-skeleton {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-3) 0;
+}
+
+.upcoming-skeleton .skeleton-line {
+  height: 14px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-sm);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-page {
+    padding: var(--space-4);
+    gap: var(--space-5);
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-welcome {
+    padding: var(--space-5);
+  }
+
+  .welcome-text {
+    font-size: var(--text-2xl);
+  }
+
+  .upcoming-item {
+    padding: var(--space-3) var(--space-4);
+  }
+}
