@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Sidebar.css';
 
 const navItems = [
@@ -9,10 +10,15 @@ const navItems = [
 ];
 
 export default function Sidebar({ isOpen, onClose }) {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // Will be implemented in Phase 2
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // Ignore errors — just redirect
+    }
     navigate('/');
   };
 
@@ -46,10 +52,16 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* Footer */}
       <div className="sidebar-footer">
         <div className="sidebar-user">
-          <div className="sidebar-avatar">👤</div>
+          <div className="sidebar-avatar">
+            {user?.displayName?.charAt(0)?.toUpperCase() || '👤'}
+          </div>
           <div className="sidebar-user-info">
-            <span className="sidebar-user-name">Student</span>
-            <span className="sidebar-user-email">user@email.com</span>
+            <span className="sidebar-user-name">
+              {user?.displayName || 'Student'}
+            </span>
+            <span className="sidebar-user-email">
+              {user?.email || 'user@email.com'}
+            </span>
           </div>
         </div>
         <button className="sidebar-logout" onClick={handleLogout}>

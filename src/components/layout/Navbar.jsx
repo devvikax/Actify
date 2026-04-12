@@ -1,4 +1,5 @@
 import { useLocation } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Navbar.css';
 
 const pageTitles = {
@@ -10,7 +11,9 @@ const pageTitles = {
 
 export default function Navbar({ onToggleSidebar }) {
   const location = useLocation();
+  const { user } = useAuth();
   const pageTitle = pageTitles[location.pathname] || 'PlanIt';
+  const displayName = user?.displayName || 'Student';
 
   return (
     <header className="navbar">
@@ -30,7 +33,7 @@ export default function Navbar({ onToggleSidebar }) {
 
         <div className="navbar-right">
           <span className="navbar-greeting">
-            Hello, <strong>Student</strong> 👋
+            Hello, <strong>{displayName}</strong> 👋
           </span>
         </div>
       </div>
