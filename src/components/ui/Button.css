@@ -1,0 +1,151 @@
+/* ─── Button — Soft Brutalism ─── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+  border: var(--border-thick);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* Sizes */
+.btn-sm {
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-4);
+  box-shadow: var(--shadow-brutal-sm);
+}
+
+.btn-md {
+  font-size: var(--text-base);
+  padding: var(--space-3) var(--space-6);
+  box-shadow: var(--shadow-brutal);
+}
+
+.btn-lg {
+  font-size: var(--text-lg);
+  padding: var(--space-4) var(--space-8);
+  box-shadow: var(--shadow-brutal);
+}
+
+/* Variants */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-brutal-hover);
+  transform: translate(-2px, -2px);
+}
+
+.btn-primary:active:not(:disabled) {
+  box-shadow: var(--shadow-brutal-active);
+  transform: translate(2px, 2px);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-secondary-dark);
+  box-shadow: var(--shadow-brutal-hover);
+  transform: translate(-2px, -2px);
+}
+
+.btn-secondary:active:not(:disabled) {
+  box-shadow: var(--shadow-brutal-active);
+  transform: translate(2px, 2px);
+}
+
+.btn-accent {
+  background-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.btn-accent:hover:not(:disabled) {
+  background-color: var(--color-accent-dark);
+  box-shadow: var(--shadow-brutal-hover);
+  transform: translate(-2px, -2px);
+}
+
+.btn-accent:active:not(:disabled) {
+  box-shadow: var(--shadow-brutal-active);
+  transform: translate(2px, 2px);
+}
+
+.btn-danger {
+  background-color: var(--color-danger);
+  color: var(--color-text-inverse);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--color-danger-dark);
+  box-shadow: var(--shadow-brutal-hover);
+  transform: translate(-2px, -2px);
+}
+
+.btn-danger:active:not(:disabled) {
+  box-shadow: var(--shadow-brutal-active);
+  transform: translate(2px, 2px);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-text);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-brutal-sm);
+  transform: translate(-1px, -1px);
+}
+
+.btn-ghost:active:not(:disabled) {
+  box-shadow: none;
+  transform: translate(0, 0);
+}
+
+.btn-outline {
+  background-color: var(--color-bg-card);
+  color: var(--color-text);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
+  box-shadow: var(--shadow-brutal-hover);
+  transform: translate(-2px, -2px);
+}
+
+.btn-outline:active:not(:disabled) {
+  box-shadow: var(--shadow-brutal-active);
+  transform: translate(2px, 2px);
+}
+
+/* Full Width */
+.btn-full {
+  width: 100%;
+}
+
+/* Disabled */
+.btn-disabled,
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: var(--shadow-brutal-sm) !important;
+  transform: none !important;
+}

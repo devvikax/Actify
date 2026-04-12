@@ -1,0 +1,66 @@
+/* ─── Card — Soft Brutalism ─── */
+
+.card {
+  background-color: var(--color-bg-card);
+  border: var(--border-thick);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-brutal);
+  overflow: hidden;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+/* Hoverable */
+.card-hoverable:hover {
+  box-shadow: var(--shadow-brutal-hover);
+  transform: translate(-2px, -2px);
+}
+
+/* Clickable */
+.card-clickable {
+  cursor: pointer;
+}
+
+.card-clickable:active {
+  box-shadow: var(--shadow-brutal-active);
+  transform: translate(2px, 2px);
+}
+
+/* ─── Priority Variants (colored left strip) ─── */
+.card-priority-high {
+  border-left: 6px solid var(--color-danger);
+}
+
+.card-priority-medium {
+  border-left: 6px solid var(--color-warning-dark);
+}
+
+.card-priority-low {
+  border-left: 6px solid var(--color-accent);
+}
+
+.card-primary {
+  border-left: 6px solid var(--color-primary);
+}
+
+.card-info {
+  border-left: 6px solid var(--color-info);
+}
+
+/* ─── Card Sections ─── */
+.card-header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-medium);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+}
+
+.card-body {
+  padding: var(--space-5);
+}
+
+.card-footer {
+  padding: var(--space-3) var(--space-5);
+  border-top: var(--border-thin);
+  background-color: var(--color-bg-secondary);
+}

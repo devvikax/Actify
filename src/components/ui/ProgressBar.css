@@ -1,0 +1,84 @@
+/* ─── ProgressBar — Soft Brutalism ─── */
+
+.progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.progress-track {
+  flex: 1;
+  background-color: var(--color-bg-secondary);
+  border: var(--border-medium);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+  position: relative;
+}
+
+/* Sizes */
+.progress-sm .progress-track {
+  height: 8px;
+}
+
+.progress-md .progress-track {
+  height: 14px;
+}
+
+.progress-lg .progress-track {
+  height: 22px;
+}
+
+/* Variants */
+.progress-primary .progress-fill {
+  background: linear-gradient(90deg, var(--color-primary-light), var(--color-primary));
+}
+
+.progress-accent .progress-fill {
+  background: linear-gradient(90deg, var(--color-accent-light), var(--color-accent));
+}
+
+.progress-warning .progress-fill {
+  background: linear-gradient(90deg, var(--color-warning-light), var(--color-warning));
+}
+
+.progress-danger .progress-fill {
+  background: linear-gradient(90deg, var(--color-danger-light), var(--color-danger));
+}
+
+.progress-info .progress-fill {
+  background: linear-gradient(90deg, var(--color-info-light), var(--color-info));
+}
+
+/* Animated striped pattern */
+.progress-animated .progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 8px,
+    rgba(255, 255, 255, 0.2) 8px,
+    rgba(255, 255, 255, 0.2) 16px
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+/* Label */
+.progress-label {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  min-width: 40px;
+  text-align: right;
+}
