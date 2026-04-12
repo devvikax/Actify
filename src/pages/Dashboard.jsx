@@ -43,7 +43,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { tasks, loading: tasksLoading } = useTasks();
   const { settings, updateSettings, loading: settingsLoading } = useSettings();
-  const { aiPlan, loading: scheduleLoading } = useSchedule();
+  const { aiPlan, loading: scheduleLoading } = useSchedule(tasks, tasksLoading);
   const navigate = useNavigate();
 
   const [editingHours, setEditingHours] = useState(false);

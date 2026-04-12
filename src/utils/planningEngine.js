@@ -159,18 +159,32 @@ export const generateSchedule = (tasks = [], dailyHours = 4, aiPlan = null) => {
   let dayIndex = 0;
   let remainingMicroTasks = [...allMicroTasks];
 
+  // Get completed hours for today to prevent refill effect
+  const todayIso = new Date().toLocaleDateString('en-CA');
+  const hoursCompletedToday = parseFloat(localStorage.getItem(`completedToday_${todayIso}`)) || 0;
+
   while (remainingMicroTasks.length > 0 && dayIndex < 30) {
     const dayTasks = [];
     let dayAllocatedHours = 0;
     const nextDayMicroTasks = [];
+    const scheduledParentsToday = new Set();
 
     const date = new Date();
     date.setDate(date.getDate() + dayIndex);
 
+    // Strictly enforce daily limit. If it's today, we deduct hours we already completed.
+    const currentDayCapacity = dayIndex === 0 
+      ? Math.max(0, effectiveDailyHours - hoursCompletedToday) 
+      : effectiveDailyHours;
+
     for (const m of remainingMicroTasks) {
-      if (dayAllocatedHours + m.plannedHours <= effectiveDailyHours) {
+      // Check if we already scheduled a part of this task today
+      if (scheduledParentsToday.has(m.parentId)) {
+        nextDayMicroTasks.push(m);
+      } else if (dayAllocatedHours + m.plannedHours <= currentDayCapacity) {
         dayTasks.push(m);
         dayAllocatedHours += m.plannedHours;
+        scheduledParentsToday.add(m.parentId);
       } else {
         nextDayMicroTasks.push(m);
       }

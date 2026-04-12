@@ -4,8 +4,8 @@ import TaskCard from '../components/tasks/TaskCard';
 import './TodayPlan.css';
 
 export default function TodayPlan() {
-  const { todaysTasks, aiPlan, loading: scheduleLoading } = useSchedule();
-  const { logProgress, loading: tasksLoading } = useTasks();
+  const { logProgress, tasks, loading: tasksLoading } = useTasks();
+  const { todaysTasks, aiPlan, loading: scheduleLoading } = useSchedule(tasks, tasksLoading);
 
   const handleCompleteMicroTask = async (microTask) => {
     try {

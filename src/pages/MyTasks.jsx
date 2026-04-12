@@ -18,11 +18,12 @@ export default function MyTasks() {
     handleUpdateTask,
     handleDeleteTask,
     handleCompleteTask,
+    handleClearCompletedTasks,
     fetchTasks,
   } = useTasks();
 
   const { settings } = useSettings();
-  const { aiPlan } = useSchedule();
+  const { aiPlan } = useSchedule(tasks, loading);
   const dailyCapacity = Math.min(settings?.dailyStudyHours || 4, getMaxStudyHours());
   const effectiveCapacity = aiPlan?.adjustedDailyHours || dailyCapacity;
 
@@ -68,6 +69,7 @@ export default function MyTasks() {
       } else {
         await handleAddTask(taskData);
       }
+      closeModal();
     } finally {
       setSaving(false);
     }
@@ -148,17 +150,27 @@ export default function MyTasks() {
       {/* Completed Tasks */}
       {!loading && completedTasks.length > 0 && (
         <section className="mytasks-section">
-          <button
-            className="section-header-toggle"
-            onClick={() => setShowCompleted(!showCompleted)}
-          >
-            <h2 className="section-title">
-              ✅ Completed Tasks ({completedTasks.length})
-            </h2>
-            <span className={`chevron ${showCompleted ? 'chevron--open' : ''}`}>
-              ▸
-            </span>
-          </button>
+          <div className="section-header-row">
+            <button
+              className="section-header-toggle"
+              onClick={() => setShowCompleted(!showCompleted)}
+            >
+              <h2 className="section-title">
+                ✅ Completed Tasks ({completedTasks.length})
+              </h2>
+              <span className={`chevron ${showCompleted ? 'chevron--open' : ''}`}>
+                ▸
+              </span>
+            </button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleClearCompletedTasks(completedTasks.map(t => t.id))}
+              title="Delete all completed tasks permanently"
+            >
+              🗑️ Clear All
+            </Button>
+          </div>
 
           {showCompleted && (
             <div className="task-list task-list--completed">

@@ -17,8 +17,7 @@ import { getAIAdjustedPlan, getMaxStudyHours } from '../services/aiPlanningServi
  *
  * @returns {Object} - { schedule, todaysTasks, aiPlan, loading }
  */
-export const useSchedule = () => {
-  const { tasks, loading: tasksLoading } = useTasks();
+export const useSchedule = (tasks, tasksLoading) => {
   const { settings, loading: settingsLoading } = useSettings();
   const [aiPlan, setAiPlan] = useState(null);
   const [aiLoading, setAiLoading] = useState(true);
