@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { updateProfile } from 'firebase/auth';
 import { useAuth } from '../context/AuthContext';
@@ -35,11 +35,12 @@ export default function Signup() {
   const { signup, user } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect if already logged in
-  if (user) {
-    navigate('/dashboard', { replace: true });
-    return null;
-  }
+  // Redirect if already logged in using useEffect to avoid render-phase side effects
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

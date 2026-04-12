@@ -80,3 +80,22 @@ export async function completeTask(uid, taskId) {
     updatedAt: serverTimestamp(),
   });
 }
+
+/**
+ * Log progress by adding completed hours to a task.
+ * Automatically marks as completed if goal reached.
+ * @param {string} uid - User ID
+ * @param {string} task - Full task object (needed for calculations)
+ * @param {number} hours - Hours to add
+ */
+export async function logTaskProgress(uid, task, hours) {
+  const taskDoc = doc(db, 'users', uid, 'tasks', task.id);
+  const newCompletedHours = (task.completedHours || 0) + hours;
+  const isNowComplete = newCompletedHours >= (task.estimatedHours || 0);
+
+  return updateDoc(taskDoc, {
+    completedHours: newCompletedHours,
+    status: isNowComplete ? 'completed' : 'pending',
+    updatedAt: serverTimestamp(),
+  });
+}

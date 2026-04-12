@@ -52,12 +52,22 @@ function getUrgencyClass(daysUntil) {
   return 'comfortable';
 }
 
-export default function TaskCard({ task, onEdit, onComplete, onDelete }) {
+export default function TaskCard({ task, onEdit, onComplete, onDelete, risk }) {
   const isCompleted = task.status === 'completed';
   const daysUntil = getDaysUntil(task.deadline);
   const countdownText = getCountdownText(daysUntil);
   const urgency = getUrgencyClass(daysUntil);
   const icon = TYPE_ICONS[task.type] || '📌';
+
+  const riskWarning = risk === 'danger' ? (
+    <div className="task-risk-alert task-risk-alert--danger">
+      ⚠️ High Procrastination Risk
+    </div>
+  ) : risk === 'warning' ? (
+    <div className="task-risk-alert task-risk-alert--warning">
+      ⚡ Tight Schedule
+    </div>
+  ) : null;
 
   const handleDelete = () => {
     if (window.confirm(`Delete "${task.name}"? This cannot be undone.`)) {
@@ -78,6 +88,8 @@ export default function TaskCard({ task, onEdit, onComplete, onDelete }) {
             {task.name}
           </h3>
         </div>
+
+        {riskWarning}
 
         {/* Meta badges */}
         <div className="task-card-meta">

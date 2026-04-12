@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
+import confetti from 'canvas-confetti';
 import {
   getUserTasks,
   addTask,
   updateTask,
   deleteTask,
   completeTask,
+  logTaskProgress,
 } from '../services/taskService';
 
 /**
@@ -87,10 +89,27 @@ export default function useTasks() {
     try {
       setError(null);
       await completeTask(user.uid, taskId);
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#7c3aed', '#db2777', '#2563eb']
+      });
       await fetchTasks();
     } catch (err) {
       console.error('Failed to complete task:', err);
       setError('Failed to complete task. Please try again.');
+      throw err;
+    }
+  };
+
+  const logProgress = async (task, hours) => {
+    if (!user) return;
+    try {
+      await logTaskProgress(user.uid, task, hours);
+      await fetchTasks();
+    } catch (err) {
+      setError(err.message);
       throw err;
     }
   };
@@ -103,6 +122,7 @@ export default function useTasks() {
     handleUpdateTask,
     handleDeleteTask,
     handleCompleteTask,
+    logProgress,
     fetchTasks,
   };
 }

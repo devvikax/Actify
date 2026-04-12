@@ -1,9 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import useTasks from '../hooks/useTasks';
 import useSettings from '../hooks/useSettings';
 import { Button, Badge } from '../components/ui';
+import ProgressChart from '../components/dashboard/ProgressChart';
+import { calculateRiskFactor } from '../utils/planningEngine';
+import { getPlanInsights } from '../services/aiService';
 import './Dashboard.css';
 
 /**
@@ -42,16 +45,41 @@ export default function Dashboard() {
 
   const [editingHours, setEditingHours] = useState(false);
   const [hoursInput, setHoursInput] = useState('');
+  const [insight, setInsight] = useState('Analyzing your workload... 🧠');
+  const [insightLoading, setInsightLoading] = useState(true);
 
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'Student';
 
   // Derived stats
+  const dailyCapacity = settings?.dailyStudyHours || 4;
   const activeTasks = tasks.filter((t) => t.status !== 'completed');
   const completedTasks = tasks.filter((t) => t.status === 'completed');
+  
+  // Calculate risks
+  const tasksWithRisk = activeTasks.map(t => ({
+    ...t,
+    risk: calculateRiskFactor(t, dailyCapacity)
+  }));
+
+  const highRiskTasks = tasksWithRisk.filter(t => t.risk === 'danger');
   const dueSoonTasks = activeTasks.filter((t) => getDaysUntil(t.deadline) <= 3);
-  const upcomingTasks = activeTasks.slice(0, 5);
+  const upcomingTasks = tasksWithRisk.slice(0, 5);
 
   const isLoading = tasksLoading || settingsLoading;
+
+  useEffect(() => {
+    if (!tasksLoading && !settingsLoading && tasks.length > 0) {
+      const fetchAI = async () => {
+        const text = await getPlanInsights(tasks, settings?.dailyStudyHours || 4);
+        setInsight(text);
+        setInsightLoading(false);
+      };
+      fetchAI();
+    } else if (!tasksLoading && tasks.length === 0) {
+      setInsight('Add some tasks to get AI planning insights! ✨');
+      setInsightLoading(false);
+    }
+  }, [tasks, settings, tasksLoading, settingsLoading]);
 
   // Inline edit for study hours
   const startEditHours = () => {
@@ -80,60 +108,85 @@ export default function Dashboard() {
           Welcome back, {displayName}! 🎯
         </h1>
         <p className="welcome-date">{getFormattedDate()}</p>
+
+        {highRiskTasks.length > 0 && (
+          <div className="dashboard-alert animate-shake">
+            <span className="alert-icon">🔥</span>
+            <div className="alert-content">
+              <strong>Risk Alert:</strong> You have {highRiskTasks.length} task(s) at high procrastination risk. Increase your daily study hours or start now!
+            </div>
+          </div>
+        )}
+
+        <div className="dashboard-ai-card">
+          <div className="ai-card-content">
+            <span className="ai-icon">🤖</span>
+            <div className="ai-text">
+              <span className="ai-label">AI Planning Coach:</span>
+              <p className={insightLoading ? 'pulse' : ''}>"{insight}"</p>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* Stat Cards Grid */}
-      <section className="stat-grid">
-        <div className="stat-card stat-card--tasks">
-          <div className="stat-icon">📋</div>
-          <div className="stat-content">
-            <span className="stat-number">{isLoading ? '—' : tasks.length}</span>
-            <span className="stat-label">Total Tasks</span>
+      {/* Stats and Progress Section */}
+      <section className="dashboard-grid">
+        <div className="stat-grid">
+          <div className="stat-card stat-card--tasks">
+            <div className="stat-icon">📋</div>
+            <div className="stat-content">
+              <span className="stat-number">{isLoading ? '—' : tasks.length}</span>
+              <span className="stat-label">Total Tasks</span>
+            </div>
           </div>
-        </div>
 
-        <div className="stat-card stat-card--completed">
-          <div className="stat-icon">✅</div>
-          <div className="stat-content">
-            <span className="stat-number">{isLoading ? '—' : completedTasks.length}</span>
-            <span className="stat-label">Completed</span>
+          <div className="stat-card stat-card--completed">
+            <div className="stat-icon">✅</div>
+            <div className="stat-content">
+              <span className="stat-number">{isLoading ? '—' : completedTasks.length}</span>
+              <span className="stat-label">Completed</span>
+            </div>
           </div>
-        </div>
 
-        <div className="stat-card stat-card--due-soon">
-          <div className="stat-icon">⏰</div>
-          <div className="stat-content">
-            <span className="stat-number">{isLoading ? '—' : dueSoonTasks.length}</span>
-            <span className="stat-label">Due Soon</span>
+          <div className="stat-card stat-card--due-soon">
+            <div className="stat-icon">⏰</div>
+            <div className="stat-content">
+              <span className="stat-number">{isLoading ? '—' : dueSoonTasks.length}</span>
+              <span className="stat-label">Due Soon</span>
+            </div>
           </div>
-        </div>
 
-        <div className="stat-card stat-card--hours" onClick={!editingHours ? startEditHours : undefined}>
-          <div className="stat-icon">📚</div>
-          <div className="stat-content">
-            {editingHours ? (
-              <input
-                className="stat-hours-input"
-                type="number"
-                min="0.5"
-                max="24"
-                step="0.5"
-                value={hoursInput}
-                onChange={(e) => setHoursInput(e.target.value)}
-                onBlur={saveHours}
-                onKeyDown={handleHoursKeyDown}
-                autoFocus
-              />
-            ) : (
-              <span className="stat-number">
-                {isLoading ? '—' : settings.dailyStudyHours}h
+          <div className="stat-card stat-card--hours" onClick={!editingHours ? startEditHours : undefined}>
+            <div className="stat-icon">📚</div>
+            <div className="stat-content">
+              {editingHours ? (
+                <input
+                  className="stat-hours-input"
+                  type="number"
+                  min="0.5"
+                  max="24"
+                  step="0.5"
+                  value={hoursInput}
+                  onChange={(e) => setHoursInput(e.target.value)}
+                  onBlur={saveHours}
+                  onKeyDown={handleHoursKeyDown}
+                  autoFocus
+                />
+              ) : (
+                <span className="stat-number">
+                  {isLoading ? '—' : settings.dailyStudyHours}h
+                </span>
+              )}
+              <span className="stat-label">
+                Study Hours / Day
+                {!editingHours && <span className="stat-edit-hint"> ✏️</span>}
               </span>
-            )}
-            <span className="stat-label">
-              Study Hours / Day
-              {!editingHours && <span className="stat-edit-hint"> ✏️</span>}
-            </span>
+            </div>
           </div>
+        </div>
+
+        <div className="progress-section">
+          <ProgressChart tasks={tasks} />
         </div>
       </section>
 

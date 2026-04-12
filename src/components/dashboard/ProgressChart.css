@@ -1,0 +1,55 @@
+.progress-chart-container {
+  background: var(--color-white);
+  border: 3px solid var(--color-black);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 10px 10px 0 var(--color-lavender-light);
+  display: flex;
+  flex-direction: column;
+}
+
+.progress-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.progress-chart-title {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.progress-chart-percentage {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.percentage-number {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.percentage-label {
+  font-size: 0.8rem;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.progress-chart-visual {
+  flex-grow: 1;
+}
+
+.progress-chart-footer {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--color-text-light);
+}
+
+.progress-chart-footer strong {
+  color: var(--color-text);
+}

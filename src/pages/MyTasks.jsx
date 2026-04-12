@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import useTasks from '../hooks/useTasks';
+import useSettings from '../hooks/useSettings';
 import { Button } from '../components/ui';
 import TaskCard from '../components/tasks/TaskCard';
 import TaskFormModal from '../components/tasks/TaskFormModal';
+import { calculateRiskFactor } from '../utils/planningEngine';
 import './MyTasks.css';
 
 export default function MyTasks() {
@@ -16,6 +18,9 @@ export default function MyTasks() {
     handleCompleteTask,
     fetchTasks,
   } = useTasks();
+
+  const { settings } = useSettings();
+  const dailyCapacity = settings?.dailyStudyHours || 4;
 
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -119,6 +124,7 @@ export default function MyTasks() {
                   onEdit={openEdit}
                   onComplete={handleCompleteTask}
                   onDelete={handleDeleteTask}
+                  risk={calculateRiskFactor(task, dailyCapacity)}
                 />
               ))}
             </div>

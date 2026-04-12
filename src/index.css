@@ -274,6 +274,12 @@ li {
 }
 
 /* ─── Animation Utilities ─── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
 .animate-fadeIn { animation: fadeIn var(--transition-base) forwards; }
 .animate-fadeInUp { animation: fadeInUp var(--transition-slow) forwards; }
 .animate-fadeInDown { animation: fadeInDown var(--transition-slow) forwards; }
@@ -282,6 +288,22 @@ li {
 .animate-scaleIn { animation: scaleIn var(--transition-base) forwards; }
 .animate-pulse { animation: pulse 2s ease-in-out infinite; }
 .animate-bounce { animation: bounce 1s ease-in-out infinite; }
+.animate-shake { animation: shake 0.4s ease-in-out; }
+
+/* Interactive Hover States */
+.card:hover, .task-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 8px 8px 0 var(--color-dark);
+}
+
+.button:active, .task-action:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--color-dark);
+}
+
+.pulse {
+  animation: pulse 1.5s infinite ease-in-out;
+}
 
 /* delay utilities for staggered animations */
 .delay-1 { animation-delay: 100ms; }
