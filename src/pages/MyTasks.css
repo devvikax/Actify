@@ -1,0 +1,210 @@
+/* ============================================
+   My Tasks Page — Soft Brutalism
+   ============================================ */
+
+/* ─── Page Layout ─── */
+.mytasks-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding: var(--space-6);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ─── Header ─── */
+.mytasks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.mytasks-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-extrabold);
+  margin: 0;
+  color: var(--color-text);
+}
+
+.mytasks-summary {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  margin: var(--space-1) 0 0;
+  font-weight: var(--font-weight-medium);
+}
+
+/* ─── Error Banner ─── */
+.mytasks-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-danger-light);
+  border: 2px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  color: var(--color-danger-dark);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-sm);
+}
+
+/* ─── Section ─── */
+.mytasks-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+  color: var(--color-text);
+}
+
+/* ─── Collapsible Header ─── */
+.section-header-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-secondary);
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.section-header-toggle:hover {
+  background: var(--color-bg-hover);
+  box-shadow: var(--shadow-brutal-sm);
+}
+
+.chevron {
+  font-size: var(--text-lg);
+  transition: transform var(--transition-fast);
+  color: var(--color-text-secondary);
+}
+
+.chevron--open {
+  transform: rotate(90deg);
+}
+
+/* ─── Task List ─── */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.task-list--completed {
+  margin-top: var(--space-3);
+}
+
+/* ─── Empty State ─── */
+.empty-state {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  background: var(--color-bg-card);
+  border: var(--border-thick);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-brutal);
+  border-style: dashed;
+}
+
+.empty-state-icon {
+  font-size: 3.5rem;
+  margin-bottom: var(--space-4);
+  animation: float 3s ease-in-out infinite;
+}
+
+.empty-state h3 {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-2);
+  color: var(--color-text);
+}
+
+.empty-state p {
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-5);
+  max-width: 400px;
+  margin-inline: auto;
+}
+
+/* ─── Loading Skeleton ─── */
+.task-skeleton {
+  display: flex;
+  background: var(--color-bg-card);
+  border: var(--border-thick);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-strip {
+  width: 6px;
+  background: var(--color-border-light);
+}
+
+.skeleton-body {
+  flex: 1;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.skeleton-line {
+  height: 12px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-line--title {
+  width: 60%;
+  height: 18px;
+}
+
+.skeleton-line--badges {
+  width: 45%;
+}
+
+.skeleton-line--info {
+  width: 35%;
+}
+
+/* ─── Float Animation ─── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 640px) {
+  .mytasks-page {
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .mytasks-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mytasks-title {
+    font-size: var(--text-2xl);
+  }
+}
