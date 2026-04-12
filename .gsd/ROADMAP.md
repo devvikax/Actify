@@ -1,6 +1,6 @@
 # ROADMAP.md
 
-> **Current Phase**: Phase 2 — Authentication System
+> **Current Phase**: Phase 3 — Task Management
 > **Milestone**: v1.0 — Hackathon Submission
 
 ## Must-Haves (from SPEC)
@@ -25,8 +25,8 @@
 - React Router with layout shell (sidebar/nav, main content area)
 - Reusable UI primitives: Button, Card, Input, Badge, ProgressBar
 
-### Phase 2: Authentication System
-**Status**: ⬜ Not Started
+### Phase 2: Authentication System ✅
+**Status**: ✅ Complete
 **Objective**: Implement full Firebase authentication flow with protected routes and persistent sessions.
 **Requirements**: REQ-01, REQ-02
 **Deliverables**:
