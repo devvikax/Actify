@@ -1,6 +1,6 @@
 # ROADMAP.md
 
-> **Current Phase**: Not started
+> **Current Phase**: Phase 2 — Authentication System
 > **Milestone**: v1.0 — Hackathon Submission
 
 ## Must-Haves (from SPEC)
@@ -14,8 +14,8 @@
 
 ## Phases
 
-### Phase 1: Foundation & Design System
-**Status**: ⬜ Not Started
+### Phase 1: Foundation & Design System ✅
+**Status**: ✅ Complete
 **Objective**: Scaffold the React+Vite project, establish the Soft Brutalism design system, configure Firebase, and set up routing/layout structure.
 **Requirements**: REQ-15, REQ-16
 **Deliverables**:
