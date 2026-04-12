@@ -15,7 +15,7 @@ const features = [
     icon: '⚠️',
     title: 'Risk Alerts',
     description: 'Proactive warnings when you\'re falling behind. Catch procrastination before it catches you.',
-    color: 'var(--color-warning-dark)',
+    color: "red",
   },
   {
     icon: '🔄',
@@ -43,7 +43,7 @@ export default function Landing() {
           </Link>
           <div className="landing-nav-links">
             <Link to="/login">
-              <Button variant="ghost" size="sm">Log In</Button>
+              <Button variant="outline" size="sm">Log In</Button>
             </Link>
             <Link to="/signup">
               <Button variant="primary" size="sm">Get Started</Button>

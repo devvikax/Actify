@@ -163,15 +163,18 @@
   .auth-card {
     padding: var(--space-6);
     box-shadow: var(--shadow-brutal);
+    margin-top: var(--space-8);
   }
 
   .auth-page {
     padding: var(--space-4);
+    align-items: flex-start;
+    padding-top: var(--space-12);
   }
 
   .auth-back {
-    position: static;
-    margin-bottom: var(--space-4);
-    text-align: center;
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
   }
 }
