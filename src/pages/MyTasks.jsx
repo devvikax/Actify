@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import useTasks from '../hooks/useTasks';
 import useSettings from '../hooks/useSettings';
+import { useSchedule } from '../hooks/useSchedule';
 import { Button } from '../components/ui';
 import TaskCard from '../components/tasks/TaskCard';
 import TaskFormModal from '../components/tasks/TaskFormModal';
 import { calculateRiskFactor } from '../utils/planningEngine';
+import { getMaxStudyHours } from '../services/aiPlanningService';
 import './MyTasks.css';
 
 export default function MyTasks() {
@@ -20,7 +22,18 @@ export default function MyTasks() {
   } = useTasks();
 
   const { settings } = useSettings();
-  const dailyCapacity = settings?.dailyStudyHours || 4;
+  const { aiPlan } = useSchedule();
+  const dailyCapacity = Math.min(settings?.dailyStudyHours || 4, getMaxStudyHours());
+  const effectiveCapacity = aiPlan?.adjustedDailyHours || dailyCapacity;
+
+  // Build AI hours lookup
+  const aiHoursMap = {};
+  if (aiPlan?.taskAllocations) {
+    aiPlan.taskAllocations.forEach(alloc => {
+      const match = tasks.find(t => t.name === alloc.taskName);
+      if (match) aiHoursMap[match.id] = alloc.adjustedHours;
+    });
+  }
 
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -124,7 +137,7 @@ export default function MyTasks() {
                   onEdit={openEdit}
                   onComplete={handleCompleteTask}
                   onDelete={handleDeleteTask}
-                  risk={calculateRiskFactor(task, dailyCapacity)}
+                  risk={calculateRiskFactor(task, effectiveCapacity, aiHoursMap[task.id] || null)}
                 />
               ))}
             </div>

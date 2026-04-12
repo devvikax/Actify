@@ -106,10 +106,22 @@ export default function TaskCard({ task, onEdit, onComplete, onDelete, risk }) {
             {task.difficulty === 'hard' ? '🔥' : task.difficulty === 'medium' ? '⚡' : '✨'}{' '}
             {task.difficulty.charAt(0).toUpperCase() + task.difficulty.slice(1)}
           </Badge>
+
+          {task.proficiencyLevel && (
+            <Badge variant="primary" size="sm">
+              {task.proficiencyLevel === 'beginner' ? '🌱' : task.proficiencyLevel === 'intermediate' ? '📘' : task.proficiencyLevel === 'advanced' ? '🎯' : '🏆'}{' '}
+              {task.proficiencyLevel.charAt(0).toUpperCase() + task.proficiencyLevel.slice(1)}
+            </Badge>
+          )}
         </div>
 
-        {/* Deadline + hours */}
+        {/* Subject + Deadline + hours */}
         <div className="task-card-info">
+          {task.subject && (
+            <span className="task-card-subject">
+              📚 {task.subject}
+            </span>
+          )}
           <span className={`task-card-countdown task-card-countdown--${urgency}`}>
             📅 {countdownText}
           </span>

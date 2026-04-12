@@ -4,7 +4,7 @@ import TaskCard from '../components/tasks/TaskCard';
 import './TodayPlan.css';
 
 export default function TodayPlan() {
-  const { todaysTasks, loading: scheduleLoading } = useSchedule();
+  const { todaysTasks, aiPlan, loading: scheduleLoading } = useSchedule();
   const { logProgress, loading: tasksLoading } = useTasks();
 
   const handleCompleteMicroTask = async (microTask) => {
@@ -17,19 +17,31 @@ export default function TodayPlan() {
   };
 
   if (scheduleLoading || tasksLoading) {
-    return <div className="page-loading">Generating your plan... 🤖</div>;
+    return <div className="page-loading">AI is generating your plan... 🤖</div>;
   }
+
+  // Get AI-adjusted daily capacity
+  const aiDailyCapacity = aiPlan?.adjustedDailyHours || null;
+  const totalPlannedHours = todaysTasks.reduce((sum, t) => sum + t.plannedHours, 0);
 
   return (
     <div className="today-plan">
       <header className="today-header">
         <h2 className="today-title">📅 Today's Focus</h2>
         <div className="today-summary-badge">
-          ⏱ Total: {todaysTasks.reduce((sum, t) => sum + t.plannedHours, 0).toFixed(1)}h
+          ⏱ Total: {totalPlannedHours.toFixed(1)}h
+          {aiDailyCapacity && ` / ${aiDailyCapacity}h AI capacity`}
         </div>
         <p className="today-subtitle">
-          AI breakdown based on your study capacity. Finish these to stay on track!
+          {aiPlan
+            ? 'AI-optimized plan based on your strength and subject proficiency.'
+            : 'Plan generated based on priority scoring and your study capacity.'}
         </p>
+        {aiPlan?.overallTip && (
+          <div className="today-ai-tip">
+            🧠 {aiPlan.overallTip}
+          </div>
+        )}
       </header>
 
       {todaysTasks.length === 0 ? (
@@ -46,7 +58,7 @@ export default function TodayPlan() {
                 task={{
                   ...microTask,
                   name: microTask.title, // Override name with micro-task title
-                  estimatedHours: microTask.plannedHours, // Show planned hours for this chunk
+                  estimatedHours: microTask.plannedHours, // Show AI-adjusted planned hours
                   status: 'pending' // Force pending since it's in the list
                 }}
                 onComplete={() => handleCompleteMicroTask(microTask)}
@@ -54,6 +66,9 @@ export default function TodayPlan() {
                 onEdit={() => {}} 
                 onDelete={() => {}}
               />
+              {microTask.aiAdjusted && (
+                <div className="today-item-ai-badge">🤖 AI-adjusted hours</div>
+              )}
             </div>
           ))}
         </div>

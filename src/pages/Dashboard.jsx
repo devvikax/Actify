@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import useTasks from '../hooks/useTasks';
 import useSettings from '../hooks/useSettings';
+import { useSchedule } from '../hooks/useSchedule';
 import { Button, Badge } from '../components/ui';
 import ProgressChart from '../components/dashboard/ProgressChart';
 import { calculateRiskFactor } from '../utils/planningEngine';
 import { getPlanInsights } from '../services/aiService';
+import { getMaxStudyHours } from '../services/aiPlanningService';
 import './Dashboard.css';
 
 /**
@@ -41,6 +43,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { tasks, loading: tasksLoading } = useTasks();
   const { settings, updateSettings, loading: settingsLoading } = useSettings();
+  const { aiPlan, loading: scheduleLoading } = useSchedule();
   const navigate = useNavigate();
 
   const [editingHours, setEditingHours] = useState(false);
@@ -51,14 +54,26 @@ export default function Dashboard() {
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'Student';
 
   // Derived stats
-  const dailyCapacity = settings?.dailyStudyHours || 4;
+  const dailyCapacity = Math.min(settings?.dailyStudyHours || 4, getMaxStudyHours());
   const activeTasks = tasks.filter((t) => t.status !== 'completed');
   const completedTasks = tasks.filter((t) => t.status === 'completed');
   
-  // Calculate risks
+  // Build AI hours lookup for risk assessment
+  const aiHoursMap = {};
+  if (aiPlan?.taskAllocations) {
+    aiPlan.taskAllocations.forEach(alloc => {
+      const match = tasks.find(t => t.name === alloc.taskName);
+      if (match) aiHoursMap[match.id] = alloc.adjustedHours;
+    });
+  }
+
+  // Use AI-adjusted daily capacity for risk calculations
+  const effectiveCapacity = aiPlan?.adjustedDailyHours || dailyCapacity;
+
+  // Calculate risks using AI-adjusted hours
   const tasksWithRisk = activeTasks.map(t => ({
     ...t,
-    risk: calculateRiskFactor(t, dailyCapacity)
+    risk: calculateRiskFactor(t, effectiveCapacity, aiHoursMap[t.id] || null)
   }));
 
   const highRiskTasks = tasksWithRisk.filter(t => t.risk === 'danger');
@@ -67,19 +82,20 @@ export default function Dashboard() {
 
   const isLoading = tasksLoading || settingsLoading;
 
+  // Fetch AI coaching insight (separate from the plan — this is just a text tip)
   useEffect(() => {
     if (!tasksLoading && !settingsLoading && tasks.length > 0) {
-      const fetchAI = async () => {
-        const text = await getPlanInsights(tasks, settings?.dailyStudyHours || 4);
+      const fetchCoachingTip = async () => {
+        const text = await getPlanInsights(tasks, dailyCapacity);
         setInsight(text);
         setInsightLoading(false);
       };
-      fetchAI();
+      fetchCoachingTip();
     } else if (!tasksLoading && tasks.length === 0) {
       setInsight('Add some tasks to get AI planning insights! ✨');
       setInsightLoading(false);
     }
-  }, [tasks, settings, tasksLoading, settingsLoading]);
+  }, [tasks, dailyCapacity, tasksLoading, settingsLoading]);
 
   // Inline edit for study hours
   const startEditHours = () => {
@@ -89,7 +105,8 @@ export default function Dashboard() {
 
   const saveHours = () => {
     const val = parseFloat(hoursInput);
-    if (!isNaN(val) && val >= 0.5 && val <= 24) {
+    const maxHours = getMaxStudyHours();
+    if (!isNaN(val) && val >= 0.5 && val <= maxHours) {
       updateSettings({ dailyStudyHours: val });
     }
     setEditingHours(false);
@@ -164,7 +181,7 @@ export default function Dashboard() {
                   className="stat-hours-input"
                   type="number"
                   min="0.5"
-                  max="24"
+                  max={getMaxStudyHours()}
                   step="0.5"
                   value={hoursInput}
                   onChange={(e) => setHoursInput(e.target.value)}
@@ -174,16 +191,98 @@ export default function Dashboard() {
                 />
               ) : (
                 <span className="stat-number">
-                  {isLoading ? '—' : settings.dailyStudyHours}h
+                  {isLoading ? '—' : dailyCapacity}h
                 </span>
               )}
               <span className="stat-label">
-                Study Hours / Day
+                Study Hours / Day (max {getMaxStudyHours()}h)
                 {!editingHours && <span className="stat-edit-hint"> ✏️</span>}
               </span>
             </div>
           </div>
         </div>
+
+        {/* AI Study Planner Panel — Driven by useSchedule's AI plan */}
+        {!scheduleLoading && aiPlan && (
+          <div className="ai-plan-panel">
+            <div className="ai-plan-header">
+              <span className="ai-plan-icon">🤖</span>
+              <div>
+                <h3 className="ai-plan-title">AI Study Planner</h3>
+                <p className="ai-plan-subtitle">
+                  {aiPlan.overallTip || aiPlan.reasoning || 'Study plan auto-generated by AI based on your profile'}
+                </p>
+              </div>
+            </div>
+
+            {/* Student Strength Bar */}
+            {aiPlan.studentStrength && (
+              <div className="strength-indicator">
+                <span className="strength-label">Student Strength:</span>
+                <div className="strength-bar-track">
+                  <div
+                    className={`strength-bar-fill strength-bar--${aiPlan.studentStrength.label}`}
+                    style={{ width: `${(aiPlan.studentStrength.score * 100).toFixed(0)}%` }}
+                  />
+                </div>
+                <span className="strength-value">{(aiPlan.studentStrength.score * 100).toFixed(0)}%</span>
+              </div>
+            )}
+
+            {/* AI-Adjusted Daily Hours vs User's Setting */}
+            {aiPlan.adjustedDailyHours && (
+              <div className="ai-adjusted-hours">
+                <span>🧠 AI Recommended Daily Hours:</span>
+                <strong className="ai-hours-value">{aiPlan.adjustedDailyHours}h</strong>
+                {aiPlan.adjustedDailyHours !== dailyCapacity && (
+                  <span className="ai-hours-diff">
+                    (You set {dailyCapacity}h → AI adjusted to {aiPlan.adjustedDailyHours}h)
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Per-Subject AI Adjustments */}
+            {aiPlan.taskAllocations && aiPlan.taskAllocations.length > 0 && (
+              <div className="ai-task-alloc-list">
+                <h4 className="ai-alloc-heading">📊 Per-Subject AI Adjustments</h4>
+                {aiPlan.taskAllocations.map((alloc, idx) => (
+                  <div key={idx} className="ai-alloc-item">
+                    <div className="ai-alloc-name">
+                      {alloc.taskName}
+                      {alloc.subject && alloc.subject !== alloc.taskName && (
+                        <span className="ai-alloc-subject"> — {alloc.subject}</span>
+                      )}
+                    </div>
+                    <div className="ai-alloc-details">
+                      <span className="ai-alloc-original">{alloc.originalHours}h est.</span>
+                      <span className="ai-alloc-arrow">→</span>
+                      <span className="ai-alloc-adjusted">{alloc.adjustedHours}h AI</span>
+                      {alloc.dailyAllocation && (
+                        <span className="ai-alloc-daily">({alloc.dailyAllocation}h/day)</span>
+                      )}
+                    </div>
+                    {alloc.reasoning && (
+                      <div className="ai-alloc-reason">💡 {alloc.reasoning}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {scheduleLoading && aiPlan === null && tasks.length > 0 && (
+          <div className="ai-plan-panel ai-plan-loading">
+            <div className="ai-plan-header">
+              <span className="ai-plan-icon pulse">🤖</span>
+              <div>
+                <h3 className="ai-plan-title">AI is analyzing your tasks...</h3>
+                <p className="ai-plan-subtitle">Evaluating your strength, proficiency per subject, and deadlines</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="progress-section">
           <ProgressChart tasks={tasks} />
@@ -223,6 +322,7 @@ export default function Dashboard() {
           <div className="upcoming-list">
             {upcomingTasks.map((task) => {
               const daysUntil = getDaysUntil(task.deadline);
+              const aiH = aiHoursMap[task.id];
               return (
                 <div key={task.id} className="upcoming-item">
                   <div className="upcoming-item-info">
@@ -233,6 +333,7 @@ export default function Dashboard() {
                         day: 'numeric',
                       })}
                       {daysUntil <= 0 && ' ⚠️'}
+                      {aiH && ` · ${aiH}h AI-planned`}
                     </span>
                   </div>
                   <Badge variant={PRIORITY_VARIANT[task.priority]} size="sm">

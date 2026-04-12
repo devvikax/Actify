@@ -16,7 +16,7 @@ export default function ProtectedRoute() {
       <div className="loading-screen">
         <div className="loading-content">
           <span className="loading-icon">🎯</span>
-          <span className="loading-text">Loading PlanIt...</span>
+          <span className="loading-text">Loading Actify...</span>
           <div className="loading-bar">
             <div className="loading-bar-fill" />
           </div>

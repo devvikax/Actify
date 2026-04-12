@@ -1,22 +1,34 @@
 /**
  * Planning Engine Utilities
- * Rule-based logic for task prioritization and breakdown
+ * AI-driven logic for task prioritization, breakdown, and scheduling.
+ * The AI analyzes all task details (proficiency, difficulty, deadlines, student strength)
+ * and sets the complete plan automatically.
  */
 
+const MAX_DAILY_HOURS = 15;
+
 const PRIORITY_WEIGHTS = {
-  High: 3,
-  Medium: 2,
-  Low: 1
+  High: 3, high: 3,
+  Medium: 2, medium: 2,
+  Low: 1, low: 1
 };
 
 const DIFFICULTY_WEIGHTS = {
-  Hard: 3,
-  Medium: 2,
-  Easy: 1
+  Hard: 3, hard: 3,
+  Medium: 2, medium: 2,
+  Easy: 1, easy: 1
+};
+
+const PROFICIENCY_WEIGHTS = {
+  beginner: 1.8,
+  intermediate: 1.2,
+  advanced: 0.9,
+  expert: 0.7,
 };
 
 /**
- * Calculates a priority score for a task based on urgency, priority, and difficulty.
+ * Calculates a priority score for a task based on urgency, priority, difficulty,
+ * AND proficiency level — low proficiency boosts priority (student needs more help).
  * @param {Object} task - The task object
  * @returns {number} - Calculated priority score (higher = more important)
  */
@@ -24,39 +36,50 @@ export const calculatePriorityScore = (task) => {
   const now = new Date();
   const deadline = new Date(task.deadline);
   
-  // Calculate relative urgency in days
-  const diffTime = deadline - now;
-  let diffDays = diffTime / (1000 * 60 * 60 * 24);
-  
-  // Minimal floor for diffDays to avoid division by zero and handle overdue/immediate tasks
-  // If it's today or overdue, give it a very high modifier (e.g., 0.5 days)
+  let diffDays = (deadline - now) / (1000 * 60 * 60 * 24);
   if (diffDays <= 0) diffDays = 0.1;
   else if (diffDays < 1) diffDays = 0.5;
 
   const priorityWeight = PRIORITY_WEIGHTS[task.priority] || 1;
   const difficultyWeight = DIFFICULTY_WEIGHTS[task.difficulty] || 1;
+  
+  // Proficiency factor: lower proficiency = higher priority (student needs more focus)
+  const proficiencyWeight = PROFICIENCY_WEIGHTS[task.proficiencyLevel] || 1.0;
 
-  // Formula: (Priority Weight * Difficulty Weight) / Days Left
-  // Scaling by 10 for better readability of scores
-  return (priorityWeight * difficultyWeight * 10) / diffDays;
+  // Formula: (Priority × Difficulty × ProficiencyNeed) / Days Left
+  return (priorityWeight * difficultyWeight * proficiencyWeight * 10) / diffDays;
 };
 
 /**
  * Breaks a task down into manageable micro-tasks (max 2 hours each).
+ * Uses AI-adjusted hours when provided.
  * @param {Object} task - The task object
+ * @param {number} [adjustedHours] - AI-adjusted hours (overrides estimatedHours)
  * @returns {Array} - Array of micro-task objects
  */
-export const breakdownTask = (task) => {
+export const breakdownTask = (task, adjustedHours = null) => {
   const maxHours = 2;
-  const estimatedHours = parseFloat(task.estimatedHours) || 0;
+  const estimatedHours = adjustedHours || parseFloat(task.estimatedHours) || 0;
   
+  if (estimatedHours <= 0) {
+    return [{
+      ...task,
+      microId: `${task.id}-m1`,
+      parentId: task.id,
+      plannedHours: 1,
+      title: task.name,
+      aiAdjusted: !!adjustedHours,
+    }];
+  }
+
   if (estimatedHours <= maxHours) {
     return [{
       ...task,
       microId: `${task.id}-m1`,
       parentId: task.id,
       plannedHours: estimatedHours,
-      title: task.name
+      title: task.name,
+      aiAdjusted: !!adjustedHours,
     }];
   }
 
@@ -72,7 +95,8 @@ export const breakdownTask = (task) => {
       parentId: task.id,
       plannedHours: chunk,
       title: `${task.name} (Part ${count})`,
-      isPartial: true
+      isPartial: true,
+      aiAdjusted: !!adjustedHours,
     });
     remainingHours -= chunk;
     count++;
@@ -82,32 +106,59 @@ export const breakdownTask = (task) => {
 };
 
 /**
- * Generates a day-wise schedule for tasks.
- * @param {Array} tasks - Array of active task objects
- * @param {number} dailyHours - Capacity per day in hours
- * @returns {Array} - Array of objects { dayIndex, date, tasks, totalHours }
+ * Generates a complete AI-driven day-wise schedule for all tasks.
+ * 
+ * This is the MAIN scheduling function. It:
+ * 1. Takes AI plan (adjusted daily hours + per-task adjustments)
+ * 2. Breaks tasks into micro-tasks using AI-adjusted hours
+ * 3. Sorts by AI-enhanced priority scores (considers proficiency)
+ * 4. Allocates to days respecting the AI-recommended daily capacity (max 15h)
+ *
+ * @param {Array} tasks - Array of all task objects
+ * @param {number} dailyHours - User's base daily hours (used as fallback)
+ * @param {Object|null} aiPlan - Full AI plan with adjustedDailyHours and taskAllocations
+ * @returns {Array} - Array of day objects { dayIndex, date, tasks, totalHours }
  */
-export const generateSchedule = (tasks = [], dailyHours = 4) => {
+export const generateSchedule = (tasks = [], dailyHours = 4, aiPlan = null) => {
   if (!tasks.length) return [];
 
-  // 1. Filter out completed tasks and prepare micro-tasks
+  // USE AI-adjusted daily hours if available, otherwise use user setting
+  // Always cap at MAX_DAILY_HOURS (15h)
+  const effectiveDailyHours = Math.min(
+    aiPlan?.adjustedDailyHours || dailyHours,
+    MAX_DAILY_HOURS
+  );
+
+  // Build a lookup map for AI-adjusted hours per task
+  const aiHoursMap = {};
+  if (aiPlan?.taskAllocations) {
+    aiPlan.taskAllocations.forEach(alloc => {
+      // Match by task name (AI may not have task IDs)
+      const matchingTask = tasks.find(t => t.name === alloc.taskName);
+      if (matchingTask && alloc.adjustedHours) {
+        aiHoursMap[matchingTask.id] = alloc.adjustedHours;
+      }
+    });
+  }
+
+  // 1. Filter active tasks, break into micro-tasks with AI-adjusted hours
   const allMicroTasks = tasks
     .filter(t => t.status !== 'completed')
     .flatMap(t => {
-      const micros = breakdownTask(t);
+      const adjustedH = aiHoursMap[t.id] || null;
+      const micros = breakdownTask(t, adjustedH);
       const score = calculatePriorityScore(t);
       return micros.map(m => ({ ...m, score }));
     });
 
-  // 2. Sort all micro-tasks by priority score (descending)
+  // 2. Sort by priority score (highest first — urgent + hard + low proficiency tasks first)
   allMicroTasks.sort((a, b) => b.score - a.score);
 
-  // 3. Allocate to days
+  // 3. Allocate to days using AI-adjusted daily capacity
   const schedule = [];
   let dayIndex = 0;
   let remainingMicroTasks = [...allMicroTasks];
 
-  // Plan for the next 30 days or until all tasks allocated
   while (remainingMicroTasks.length > 0 && dayIndex < 30) {
     const dayTasks = [];
     let dayAllocatedHours = 0;
@@ -117,7 +168,7 @@ export const generateSchedule = (tasks = [], dailyHours = 4) => {
     date.setDate(date.getDate() + dayIndex);
 
     for (const m of remainingMicroTasks) {
-      if (dayAllocatedHours + m.plannedHours <= dailyHours) {
+      if (dayAllocatedHours + m.plannedHours <= effectiveDailyHours) {
         dayTasks.push(m);
         dayAllocatedHours += m.plannedHours;
       } else {
@@ -125,18 +176,21 @@ export const generateSchedule = (tasks = [], dailyHours = 4) => {
       }
     }
 
-    schedule.push({
-      dayIndex,
-      date: date.toISOString(),
-      tasks: dayTasks,
-      totalHours: dayAllocatedHours
-    });
+    if (dayTasks.length > 0) {
+      schedule.push({
+        dayIndex,
+        date: date.toISOString(),
+        tasks: dayTasks,
+        totalHours: dayAllocatedHours,
+        aiDailyCapacity: effectiveDailyHours,
+      });
+    }
 
     remainingMicroTasks = nextDayMicroTasks;
     dayIndex++;
   }
 
-  // Handle leftovers (tasks that didn't fit in 30 days)
+  // Handle leftovers
   if (remainingMicroTasks.length > 0) {
     schedule.push({
       dayIndex: -1,
@@ -151,18 +205,20 @@ export const generateSchedule = (tasks = [], dailyHours = 4) => {
 
 /**
  * Calculate the procrastination risk factor for a task.
- * @param {Object} task - The task object.
- * @param {number} dailyCapacity - The daily study hour capacity.
+ * Uses AI-adjusted hours when available for accurate risk assessment.
+ * @param {Object} task - The task object
+ * @param {number} dailyCapacity - The daily study hour capacity
+ * @param {number} [aiAdjustedHours] - AI-adjusted hours for this task
  * @returns {string} - 'low' | 'warning' | 'danger'
  */
-export const calculateRiskFactor = (task, dailyCapacity) => {
+export const calculateRiskFactor = (task, dailyCapacity, aiAdjustedHours = null) => {
   if (task.status === 'completed') return 'low';
 
-  const totalHours = task.estimatedHours || 1;
+  // Use AI-adjusted hours if available, otherwise use original estimate
+  const totalHours = aiAdjustedHours || task.estimatedHours || 1;
   const completedHours = task.completedHours || 0;
   const hoursRemaining = Math.max(0, totalHours - completedHours);
 
-  // Time remaining (at least 1 day for calculation safety)
   const deadline = new Date(task.deadline + 'T23:59:59');
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -170,9 +226,11 @@ export const calculateRiskFactor = (task, dailyCapacity) => {
   const diffTime = deadline - today;
   const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
 
-  // Risk = Hours needed per day / Capacity available per day
+  // Cap dailyCapacity at 15h for risk calc
+  const cappedCapacity = Math.min(dailyCapacity, MAX_DAILY_HOURS);
+
   const dailyNeeded = hoursRemaining / diffDays;
-  const riskScore = dailyNeeded / dailyCapacity;
+  const riskScore = dailyNeeded / cappedCapacity;
 
   if (riskScore > 0.8) return 'danger';
   if (riskScore > 0.5) return 'warning';

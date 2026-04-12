@@ -113,6 +113,11 @@
   color: var(--color-text-muted);
 }
 
+.task-card-subject {
+  color: var(--color-primary-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
 /* ─── Notes ─── */
 .task-card-notes {
   font-size: var(--text-sm);
