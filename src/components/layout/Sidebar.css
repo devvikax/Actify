@@ -1,0 +1,177 @@
+/* ============================================
+   Sidebar — Soft Brutalism
+   ============================================ */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  background: var(--color-bg-sidebar);
+  border-right: var(--border-thick);
+  display: flex;
+  flex-direction: column;
+  z-index: var(--z-sticky);
+  transition: transform var(--transition-base);
+}
+
+/* ─── Brand ─── */
+.sidebar-brand {
+  padding: var(--space-5);
+  border-bottom: var(--border-medium);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+}
+
+.sidebar-logo-icon {
+  font-size: var(--text-2xl);
+}
+
+.sidebar-logo-text {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text);
+}
+
+/* ─── Navigation ─── */
+.sidebar-nav {
+  flex: 1;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  overflow-y: auto;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--color-text);
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--text-base);
+  transition: all var(--transition-fast);
+  border: 2px solid transparent;
+}
+
+.sidebar-link:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-light);
+  transform: translateX(4px);
+}
+
+.sidebar-link-active {
+  background: var(--color-primary-light);
+  border: var(--border-medium);
+  box-shadow: var(--shadow-brutal-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.sidebar-link-active:hover {
+  transform: none;
+  border-color: var(--color-border);
+}
+
+.sidebar-link-icon {
+  font-size: var(--text-xl);
+  width: 28px;
+  text-align: center;
+}
+
+.sidebar-link-label {
+  white-space: nowrap;
+}
+
+/* ─── Footer ─── */
+.sidebar-footer {
+  padding: var(--space-4);
+  border-top: var(--border-medium);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sidebar-avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--color-primary-light);
+  border: var(--border-medium);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  flex-shrink: 0;
+}
+
+.sidebar-user-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-user-name {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-user-email {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-logout {
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  background: transparent;
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.sidebar-logout:hover {
+  background: var(--color-danger-light);
+  border-color: var(--color-danger);
+  box-shadow: var(--shadow-brutal-sm);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar-open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-soft-lg);
+  }
+}

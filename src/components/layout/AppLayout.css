@@ -1,0 +1,54 @@
+/* ============================================
+   AppLayout — Soft Brutalism
+   ============================================ */
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--sidebar-width);
+  min-height: 100vh;
+  transition: margin-left var(--transition-base);
+}
+
+.app-content {
+  flex: 1;
+  padding: var(--space-6);
+  padding-top: calc(var(--navbar-height) + var(--space-6));
+  max-width: var(--container-max);
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Mobile overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg-overlay);
+  z-index: calc(var(--z-sticky) - 1);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .app-main {
+    margin-left: 0;
+  }
+
+  .sidebar-overlay {
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-content {
+    padding: var(--space-4);
+    padding-top: calc(var(--navbar-height) + var(--space-4));
+  }
+}

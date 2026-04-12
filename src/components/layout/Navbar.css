@@ -1,0 +1,94 @@
+/* ============================================
+   Navbar — Soft Brutalism
+   ============================================ */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: var(--sidebar-width);
+  height: var(--navbar-height);
+  background: rgba(255, 248, 240, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: var(--border-thick);
+  z-index: var(--z-sticky);
+  transition: left var(--transition-base);
+}
+
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 var(--space-6);
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.navbar-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.navbar-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: var(--space-2);
+  background: transparent;
+  border: var(--border-medium);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.navbar-hamburger:hover {
+  background: var(--color-bg-hover);
+  box-shadow: var(--shadow-brutal-sm);
+}
+
+.hamburger-line {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--color-text);
+  border-radius: 2px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.navbar-greeting {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  font-family: var(--font-heading);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .navbar {
+    left: 0;
+  }
+
+  .navbar-hamburger {
+    display: flex;
+  }
+}
+
+@media (max-width: 640px) {
+  .navbar-inner {
+    padding: 0 var(--space-4);
+  }
+
+  .navbar-greeting {
+    display: none;
+  }
+}
