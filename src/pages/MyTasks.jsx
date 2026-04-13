@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import useTasks from '../hooks/useTasks';
 import useSettings from '../hooks/useSettings';
+import { useSchedule } from '../hooks/useSchedule';
 import { Button } from '../components/ui';
 import TaskCard from '../components/tasks/TaskCard';
 import TaskFormModal from '../components/tasks/TaskFormModal';
 import { calculateRiskFactor } from '../utils/planningEngine';
+import { getMaxStudyHours } from '../services/aiPlanningService';
 import './MyTasks.css';
 
 export default function MyTasks() {
@@ -16,11 +18,23 @@ export default function MyTasks() {
     handleUpdateTask,
     handleDeleteTask,
     handleCompleteTask,
+    handleClearCompletedTasks,
     fetchTasks,
   } = useTasks();
 
   const { settings } = useSettings();
-  const dailyCapacity = settings?.dailyStudyHours || 4;
+  const { aiPlan } = useSchedule(tasks, loading);
+  const dailyCapacity = Math.min(settings?.dailyStudyHours || 4, getMaxStudyHours());
+  const effectiveCapacity = aiPlan?.adjustedDailyHours || dailyCapacity;
+
+  // Build AI hours lookup
+  const aiHoursMap = {};
+  if (aiPlan?.taskAllocations) {
+    aiPlan.taskAllocations.forEach(alloc => {
+      const match = tasks.find(t => t.name === alloc.taskName);
+      if (match) aiHoursMap[match.id] = alloc.adjustedHours;
+    });
+  }
 
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -55,6 +69,7 @@ export default function MyTasks() {
       } else {
         await handleAddTask(taskData);
       }
+      closeModal();
     } finally {
       setSaving(false);
     }
@@ -124,7 +139,7 @@ export default function MyTasks() {
                   onEdit={openEdit}
                   onComplete={handleCompleteTask}
                   onDelete={handleDeleteTask}
-                  risk={calculateRiskFactor(task, dailyCapacity)}
+                  risk={calculateRiskFactor(task, effectiveCapacity, aiHoursMap[task.id] || null)}
                 />
               ))}
             </div>
@@ -135,17 +150,27 @@ export default function MyTasks() {
       {/* Completed Tasks */}
       {!loading && completedTasks.length > 0 && (
         <section className="mytasks-section">
-          <button
-            className="section-header-toggle"
-            onClick={() => setShowCompleted(!showCompleted)}
-          >
-            <h2 className="section-title">
-              ✅ Completed Tasks ({completedTasks.length})
-            </h2>
-            <span className={`chevron ${showCompleted ? 'chevron--open' : ''}`}>
-              ▸
-            </span>
-          </button>
+          <div className="section-header-row">
+            <button
+              className="section-header-toggle"
+              onClick={() => setShowCompleted(!showCompleted)}
+            >
+              <h2 className="section-title">
+                ✅ Completed Tasks ({completedTasks.length})
+              </h2>
+              <span className={`chevron ${showCompleted ? 'chevron--open' : ''}`}>
+                ▸
+              </span>
+            </button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleClearCompletedTasks(completedTasks.map(t => t.id))}
+              title="Delete all completed tasks permanently"
+            >
+              🗑️ Clear All
+            </Button>
+          </div>
 
           {showCompleted && (
             <div className="task-list task-list--completed">

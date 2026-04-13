@@ -368,3 +368,252 @@
   line-height: var(--line-height-base);
   font-style: italic;
 }
+
+/* ─── AI Study Planner Panel ─── */
+.ai-plan-panel {
+  background: var(--color-bg-card);
+  border: var(--border-thick);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-brutal);
+  padding: var(--space-6);
+  border-left: 6px solid var(--color-accent);
+  grid-column: 1 / -1;
+  animation: fadeSlideUp 0.5s ease-out;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ai-plan-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.ai-plan-icon {
+  font-size: 2.2rem;
+  background: linear-gradient(135deg, var(--color-accent-light), var(--color-primary-light));
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  border: var(--border-medium);
+  flex-shrink: 0;
+}
+
+.ai-plan-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-extrabold);
+  margin: 0;
+  color: var(--color-text);
+}
+
+.ai-plan-subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: var(--space-1) 0 0;
+  line-height: var(--line-height-base);
+}
+
+/* ─── Student Strength Indicator ─── */
+.strength-indicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-secondary);
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.strength-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.strength-bar-track {
+  flex: 1;
+  height: 10px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 1s ease-out;
+}
+
+.strength-bar--strong {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+.strength-bar--above_average {
+  background: linear-gradient(90deg, #84cc16, #65a30d);
+}
+
+.strength-bar--average {
+  background: linear-gradient(90deg, #eab308, #ca8a04);
+}
+
+.strength-bar--below_average {
+  background: linear-gradient(90deg, #f97316, #ea580c);
+}
+
+.strength-bar--needs_improvement {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.strength-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text);
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ─── AI Adjusted Hours ─── */
+.ai-adjusted-hours {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: linear-gradient(135deg, var(--color-accent-light), var(--color-primary-light));
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.ai-hours-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-accent-dark);
+}
+
+/* ─── Per-Task AI Allocations ─── */
+.ai-task-alloc-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ai-alloc-heading {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-bold);
+  margin: 0 0 var(--space-2);
+  color: var(--color-text);
+}
+
+.ai-alloc-item {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg);
+  border: var(--border-medium);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.ai-alloc-item:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-brutal);
+}
+
+.ai-alloc-name {
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+
+.ai-alloc-details {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.ai-alloc-original {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.ai-alloc-arrow {
+  color: var(--color-text-muted);
+  font-size: var(--text-lg);
+}
+
+.ai-alloc-adjusted {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-accent-dark);
+}
+
+.ai-alloc-reason {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-1);
+  font-style: italic;
+}
+
+/* ─── AI Panel Responsive ─── */
+@media (max-width: 640px) {
+  .ai-plan-panel {
+    padding: var(--space-4);
+  }
+
+  .ai-plan-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .strength-indicator {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .strength-label {
+    width: 100%;
+  }
+
+  .ai-adjusted-hours {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-2);
+  }
+
+  .ai-alloc-details {
+    flex-wrap: wrap;
+  }
+}
+
+/* ─── Shake Animation for Risk Alert ─── */
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+  40%, 60% { transform: translate3d(3px, 0, 0); }
+}

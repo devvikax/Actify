@@ -3,6 +3,13 @@ import { Button, Input, Select } from '../ui';
 import { Textarea } from '../ui/Input';
 import './TaskFormModal.css';
 
+const PROFICIENCY_LEVELS = [
+  { value: 'beginner', label: '🌱 Beginner — Just started' },
+  { value: 'intermediate', label: '📘 Intermediate — Some grasp' },
+  { value: 'advanced', label: '🎯 Advanced — Good command' },
+  { value: 'expert', label: '🏆 Expert — Full mastery' },
+];
+
 const TASK_TYPES = [
   { value: 'assignment', label: '📝 Assignment' },
   { value: 'exam', label: '📖 Exam' },
@@ -40,10 +47,12 @@ export default function TaskFormModal({
   const isEdit = !!initialData;
 
   const [name, setName] = useState('');
+  const [subject, setSubject] = useState('');
   const [type, setType] = useState('assignment');
   const [deadline, setDeadline] = useState('');
   const [priority, setPriority] = useState('medium');
   const [difficulty, setDifficulty] = useState('medium');
+  const [proficiencyLevel, setProficiencyLevel] = useState('intermediate');
   const [estimatedHours, setEstimatedHours] = useState('');
   const [notes, setNotes] = useState('');
   const [formError, setFormError] = useState('');
@@ -52,19 +61,23 @@ export default function TaskFormModal({
   useEffect(() => {
     if (initialData) {
       setName(initialData.name || '');
+      setSubject(initialData.subject || '');
       setType(initialData.type || 'assignment');
       setDeadline(initialData.deadline || '');
       setPriority(initialData.priority || 'medium');
       setDifficulty(initialData.difficulty || 'medium');
+      setProficiencyLevel(initialData.proficiencyLevel || 'intermediate');
       setEstimatedHours(initialData.estimatedHours?.toString() || '');
       setNotes(initialData.notes || '');
     } else {
       // Reset for create mode
       setName('');
+      setSubject('');
       setType('assignment');
       setDeadline('');
       setPriority('medium');
       setDifficulty('medium');
+      setProficiencyLevel('intermediate');
       setEstimatedHours('');
       setNotes('');
     }
@@ -103,10 +116,12 @@ export default function TaskFormModal({
     try {
       await onSubmit({
         name: name.trim(),
+        subject: subject.trim() || name.trim(),
         type,
         deadline,
         priority,
         difficulty,
+        proficiencyLevel,
         estimatedHours: parseFloat(estimatedHours),
         notes: notes.trim(),
       });
@@ -143,6 +158,17 @@ export default function TaskFormModal({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                disabled={loading}
+              />
+            </div>
+
+            <div className="full-width">
+              <Input
+                id="task-subject"
+                label="Subject / Course Name"
+                placeholder="e.g., Computer Science, Mathematics"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
                 disabled={loading}
               />
             </div>
@@ -184,6 +210,16 @@ export default function TaskFormModal({
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
               options={DIFFICULTIES}
+              required
+              disabled={loading}
+            />
+
+            <Select
+              id="task-proficiency"
+              label="Your Command Level"
+              value={proficiencyLevel}
+              onChange={(e) => setProficiencyLevel(e.target.value)}
+              options={PROFICIENCY_LEVELS}
               required
               disabled={loading}
             />

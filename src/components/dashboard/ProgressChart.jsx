@@ -24,8 +24,8 @@ export default function ProgressChart({ tasks = [] }) {
   const completionRate = totalHours > 0 ? Math.round((completedHours / totalHours) * 100) : 0;
   
   const data = [
-    { name: 'Completed', value: completedHours, color: '#9dffb0' }, // Mint Green
-    { name: 'Remaining', value: totalHours - completedHours, color: '#fef3c7' }, // Cream Yellow
+    { name: 'Completed', value: completedHours, color: 'green' },
+    { name: 'Remaining', value: totalHours - completedHours, color: 'red' },
   ];
 
   return (

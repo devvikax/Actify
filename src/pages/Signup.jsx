@@ -4,6 +4,7 @@ import { updateProfile } from 'firebase/auth';
 import { useAuth } from '../context/AuthContext';
 import { Button, Input } from '../components/ui';
 import './Auth.css';
+import logo from "../assets/logo.png";
 
 /**
  * Map Firebase error codes to user-friendly messages.
@@ -89,8 +90,8 @@ export default function Signup() {
       <div className="auth-card">
         <div className="auth-header">
           <div className="auth-logo">
-            <span className="auth-logo-icon">🎯</span>
-            <span className="auth-logo-text">PlanIt</span>
+            <img src={logo} alt="logo" className="landing-logo-icon" />
+            <span className="landing-logo-text">Actify</span>
           </div>
           <h1 className="auth-title">Create Your Account</h1>
           <p className="auth-subtitle">Start planning smarter today</p>

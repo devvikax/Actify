@@ -8,6 +8,7 @@ import {
   deleteTask,
   completeTask,
   logTaskProgress,
+  clearCompletedTasks,
 } from '../services/taskService';
 
 /**
@@ -103,10 +104,30 @@ export default function useTasks() {
     }
   };
 
+  const handleClearCompletedTasks = async (taskIds) => {
+    if (!user) return;
+    try {
+      setError(null);
+      await clearCompletedTasks(user.uid, taskIds);
+      await fetchTasks();
+    } catch (err) {
+      console.error('Failed to clear completed tasks:', err);
+      setError('Failed to clear completed tasks. Please try again.');
+      throw err;
+    }
+  };
+
   const logProgress = async (task, hours) => {
     if (!user) return;
     try {
       await logTaskProgress(user.uid, task, hours);
+      
+      // Track hours completed today locally to prevent infinite schedule refilling
+      const todayIso = new Date().toLocaleDateString('en-CA');
+      const key = `completedToday_${todayIso}`;
+      const current = parseFloat(localStorage.getItem(key)) || 0;
+      localStorage.setItem(key, current + hours);
+
       await fetchTasks();
     } catch (err) {
       setError(err.message);
@@ -122,6 +143,7 @@ export default function useTasks() {
     handleUpdateTask,
     handleDeleteTask,
     handleCompleteTask,
+    handleClearCompletedTasks,
     logProgress,
     fetchTasks,
   };

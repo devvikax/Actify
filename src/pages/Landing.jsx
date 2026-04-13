@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Button, Card, CardBody } from '../components/ui';
 import './Landing.css';
+import logo from "../assets/logo.png";
+
 
 const features = [
   {
@@ -13,7 +15,7 @@ const features = [
     icon: '⚠️',
     title: 'Risk Alerts',
     description: 'Proactive warnings when you\'re falling behind. Catch procrastination before it catches you.',
-    color: 'var(--color-warning-dark)',
+    color: "red",
   },
   {
     icon: '🔄',
@@ -24,9 +26,9 @@ const features = [
 ];
 
 const steps = [
-  { number: '01', title: 'Add Your Tasks', description: 'Input assignments, exams, and projects with deadlines and priorities.' },
+  { number: '01', title: 'Add Your Tasks', description: 'Input assignments, exams and projects with deadlines and priorities.' },
   { number: '02', title: 'Get Your Plan', description: 'AI generates a personalized day-wise execution plan instantly.' },
-  { number: '03', title: 'Execute & Track', description: 'Follow your plan, mark tasks done, and watch your progress grow.' },
+  { number: '03', title: 'Execute & Track', description: 'Follow your plan, mark tasks done and watch your progress grow.' },
 ];
 
 export default function Landing() {
@@ -36,12 +38,12 @@ export default function Landing() {
       <nav className="landing-nav">
         <div className="landing-nav-inner container">
           <Link to="/" className="landing-logo">
-            <span className="landing-logo-icon">🎯</span>
-            <span className="landing-logo-text">PlanIt</span>
+            <img src={logo} alt="logo" className="landing-logo-icon" />
+            <span className="landing-logo-text">Actify</span>
           </Link>
           <div className="landing-nav-links">
             <Link to="/login">
-              <Button variant="ghost" size="sm">Log In</Button>
+              <Button variant="outline" size="sm">Log In</Button>
             </Link>
             <Link to="/signup">
               <Button variant="primary" size="sm">Get Started</Button>
@@ -79,15 +81,15 @@ export default function Landing() {
             </div>
             <div className="hero-stats">
               <div className="hero-stat">
-                <span className="hero-stat-number">📊</span>
+                <span className="hero-stat-number">|</span>
                 <span className="hero-stat-label">Smart Scheduling</span>
               </div>
               <div className="hero-stat">
-                <span className="hero-stat-number">⏰</span>
+                <span className="hero-stat-number">|</span>
                 <span className="hero-stat-label">Risk Detection</span>
               </div>
               <div className="hero-stat">
-                <span className="hero-stat-number">✅</span>
+                <span className="hero-stat-number">|</span>
                 <span className="hero-stat-label">Progress Tracking</span>
               </div>
             </div>
@@ -155,8 +157,8 @@ export default function Landing() {
       <section className="features" id="features">
         <div className="container">
           <div className="section-header">
-            <h2>Why Students Love PlanIt</h2>
-            <p>Intelligent features that actually help you get things done.</p>
+            <h2>Why Students Love Actify</h2>
+            <p>Intelligent features that actually help you get things done</p>
           </div>
           <div className="features-grid">
             {features.map((feature, index) => (
@@ -179,7 +181,7 @@ export default function Landing() {
         <div className="container">
           <div className="section-header">
             <h2>How It Works</h2>
-            <p>Three simple steps to academic success.</p>
+            <p>Three simple steps to academic success</p>
           </div>
           <div className="steps-grid">
             {steps.map((step, index) => (
@@ -199,9 +201,9 @@ export default function Landing() {
           <Card className="cta-card">
             <CardBody>
               <h2>Ready to Stop Procrastinating?</h2>
-              <p>Join thousands of students who've taken control of their academic life.</p>
+              <p>Join thousands of students who've taken control of their academic life</p>
               <Link to="/signup">
-                <Button variant="primary" size="lg">
+                <Button variant="primary" size="md">
                   Get Started — It's Free 🎯
                 </Button>
               </Link>
@@ -215,11 +217,11 @@ export default function Landing() {
         <div className="container">
           <div className="footer-content">
             <div className="footer-brand">
-              <span className="landing-logo-icon">🎯</span>
-              <span className="landing-logo-text">PlanIt</span>
+              <img src={logo} alt="logo" className="landing-logo-icon" />
+              <span className="landing-logo-text">Actify</span>
             </div>
             <p className="footer-tagline">AI-Powered Academic Execution Planner</p>
-            <p className="footer-copy">Built with 💜 for students who want to do better.</p>
+            <p className="footer-copy">Made by Alpha Bro's</p>
           </div>
         </div>
       </footer>

@@ -12,7 +12,7 @@ const pageTitles = {
 export default function Navbar({ onToggleSidebar }) {
   const location = useLocation();
   const { user } = useAuth();
-  const pageTitle = pageTitles[location.pathname] || 'PlanIt';
+  const pageTitle = pageTitles[location.pathname] || 'Actify';
   const displayName = user?.displayName || 'Student';
 
   return (

@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Sidebar.css';
+import logo from "../../assets/logo.png";
 
 const navItems = [
   { path: '/dashboard', icon: '📊', label: 'Dashboard' },
@@ -27,8 +28,8 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* Brand */}
       <div className="sidebar-brand">
         <NavLink to="/dashboard" className="sidebar-logo" onClick={onClose}>
-          <span className="sidebar-logo-icon">🎯</span>
-          <span className="sidebar-logo-text">PlanIt</span>
+          <img src={logo} alt="logo" className="landing-logo-icon" />
+          <span className="landing-logo-text">Actify</span>
         </NavLink>
       </div>
 

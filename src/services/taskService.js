@@ -99,3 +99,13 @@ export async function logTaskProgress(uid, task, hours) {
     updatedAt: serverTimestamp(),
   });
 }
+
+/**
+ * Delete all completed tasks for a user.
+ * @param {string} uid - User ID
+ * @param {string[]} taskIds - Array of completed task IDs
+ */
+export async function clearCompletedTasks(uid, taskIds) {
+  const promises = taskIds.map(id => deleteTask(uid, id));
+  await Promise.all(promises);
+}
