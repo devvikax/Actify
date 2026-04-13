@@ -112,12 +112,7 @@ Open your browser to `http://localhost:5173/` and start planning!
 4. **Dashboard**: View your AI-Adjusted strength, recommended hours, risk alerts, and completion charts.
 5. **Today's Plan**: Follow the AI's micro-task schedule. Mark parts as completed and watch the progress bars fill up.
 
----
 
-## 📜 GSD Canonical Methodology
-This project was developed under a strict **Spec → Plan → Execute → Verify → Commit** methodology. See `.gsd/SPEC.md` and `.gsd/ROADMAP.md` for historical artifact details on how features were incrementally delivered.
-
----
 
 <div align="center">
   <p>Made by Alpha Bro's</p>
