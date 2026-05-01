@@ -53,8 +53,8 @@ Make sure you have [Node.js](https://nodejs.org/) installed along with `npm` or 
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/your-username/Project_04.git
-cd planit
+git clone https://github.com/devvikax/Actify.git
+cd Actify
 npm install
 ```
 
